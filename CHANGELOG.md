@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.3.0](https://github.com/AliNaveed01/agentgauge/compare/v0.2.0...v0.3.0) (2026-11-05)
+
+
+### Features
+
+* **cli:** add calibrate --fail-under ([a85a231](https://github.com/AliNaveed01/agentgauge/commit/a85a23179b6c7a9df0e11075a7f2acb40f088a37)), closes [#42](https://github.com/AliNaveed01/agentgauge/issues/42)
+* **cli:** add import-otel command ([468f619](https://github.com/AliNaveed01/agentgauge/commit/468f61904be892e6fb040925606b5fbfa3f96f5d)), closes [#41](https://github.com/AliNaveed01/agentgauge/issues/41)
+* **cli:** add runs show --trajectory ([7611e04](https://github.com/AliNaveed01/agentgauge/commit/7611e0406a322ad36860d9d6bf7f7592a6b57bd7)), closes [#40](https://github.com/AliNaveed01/agentgauge/issues/40)
+* **core:** add trajectory, agent config and tool mock models ([9288275](https://github.com/AliNaveed01/agentgauge/commit/92882751fc418ec09fa3920e894361d0073b7b6e)), closes [#36](https://github.com/AliNaveed01/agentgauge/issues/36)
+* **core:** resolve relative rubric paths against the suite file ([bf45722](https://github.com/AliNaveed01/agentgauge/commit/bf45722d32710aa76e68f6d096cec4e9a807bfe7)), closes [#42](https://github.com/AliNaveed01/agentgauge/issues/42)
+* **otel:** import OTLP GenAI traces as scorable trajectories ([528a4c9](https://github.com/AliNaveed01/agentgauge/commit/528a4c9502585bb9d18a7297ebe67614fb87e248)), closes [#41](https://github.com/AliNaveed01/agentgauge/issues/41)
+* **providers:** script multi-step fake responses with tool calls ([017e10d](https://github.com/AliNaveed01/agentgauge/commit/017e10ddb3ca41195634c1c374128eb736f89b15)), closes [#37](https://github.com/AliNaveed01/agentgauge/issues/37)
+* **runner:** run cases as a multi-step tool-loop agent ([901a70e](https://github.com/AliNaveed01/agentgauge/commit/901a70eaa2919fb139abe1532e6eb40228989d2a)), closes [#37](https://github.com/AliNaveed01/agentgauge/issues/37)
+* **scorers:** add trajectory_match and trajectory_budget scorers ([111a75b](https://github.com/AliNaveed01/agentgauge/commit/111a75b7b876010bb3ac41561b79ee9748b2512b)), closes [#38](https://github.com/AliNaveed01/agentgauge/issues/38)
+* **storage:** persist trajectories in schema migration 2 ([740dda2](https://github.com/AliNaveed01/agentgauge/commit/740dda2b7bd7e2aba02a5b8e17ddd99709883320)), closes [#39](https://github.com/AliNaveed01/agentgauge/issues/39)
+
+
+### Bug Fixes
+
+* **otel:** take the final answer from the latest chat span that has one ([187594c](https://github.com/AliNaveed01/agentgauge/commit/187594c14892d2d851f33b0a98b0ebc031fad86e)), closes [#41](https://github.com/AliNaveed01/agentgauge/issues/41)
+
+
+### Documentation
+
+* **adr:** record OTel import and M2 carryover decisions ([c77b3b2](https://github.com/AliNaveed01/agentgauge/commit/c77b3b20b674045abd47e11b61b30eb372cebf3c)), closes [#41](https://github.com/AliNaveed01/agentgauge/issues/41)
+* **adr:** record trajectory and agent loop decisions ([8d250af](https://github.com/AliNaveed01/agentgauge/commit/8d250afcf59d055d6cf9bcc40d8cc2ae9c81f241)), closes [#36](https://github.com/AliNaveed01/agentgauge/issues/36)
+* document trajectories, agent runs and OTel import ([6273528](https://github.com/AliNaveed01/agentgauge/commit/6273528c38731ed8722b5755ff09215292df0f66)), closes [#38](https://github.com/AliNaveed01/agentgauge/issues/38)
+* **examples:** add multi-step agent and OTel import examples ([897e0be](https://github.com/AliNaveed01/agentgauge/commit/897e0be03fe49d7930e20b7bcfc1811ffa0bed62)), closes [#36](https://github.com/AliNaveed01/agentgauge/issues/36)
+
 ## [0.2.0](https://github.com/AliNaveed01/agentgauge/compare/v0.1.0...v0.2.0) (2026-11-05)
 
 
