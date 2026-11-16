@@ -373,10 +373,16 @@ class OutputFormat(StrEnum):
 @app.command()
 def compare(
     baseline: Annotated[
-        str, typer.Argument(help="Baseline run: an id, an id prefix, 'latest' or 'previous'.")
+        str,
+        typer.Argument(
+            metavar="BASELINE", help="Baseline run: an id, an id prefix, 'latest' or 'previous'."
+        ),
     ],
     candidate: Annotated[
-        str, typer.Argument(help="Candidate run: an id, an id prefix, 'latest' or 'previous'.")
+        str,
+        typer.Argument(
+            metavar="CANDIDATE", help="Candidate run: an id, an id prefix, 'latest' or 'previous'."
+        ),
     ],
     db: DbOption = DEFAULT_DB,
     suite: Annotated[
