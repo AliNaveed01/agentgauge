@@ -383,4 +383,63 @@ def test_a_database_created_before_migration_two_still_opens(tmp_path: Path) -> 
             )
         )
         assert store.get_run("new1").results[0].output == _agent_output()
-    assert schema_version(sqlite3.connect(path)) == 2
+    assert schema_version(sqlite3.connect(path)) == len(MIGRATIONS)
+
+
+def test_case_inputs_round_trip_including_chat_messages_and_unicode(tmp_path: Path) -> None:
+    run = RunResult(
+        run_id="in1",
+        suite_name="s",
+        model="m",
+        started_at=T0,
+        results=(
+            CaseResult(
+                case_id="plain", input=(Message(role="user", content="Wie geht's? \u2603"),)
+            ),
+            CaseResult(
+                case_id="chat",
+                input=(
+                    Message(role="system", content="be brief"),
+                    Message(role="user", content="hi"),
+                ),
+                error="boom",
+            ),
+            CaseResult(case_id="none"),
+        ),
+    )
+    with RunStore(tmp_path / "r.db") as store:
+        store.save_run(run)
+        assert store.get_run("in1") == run
+    rows = dict(
+        sqlite3.connect(tmp_path / "r.db").execute("SELECT case_id, input_json FROM case_results")
+    )
+    assert rows["none"] is None and "be brief" in rows["chat"]
+
+
+def test_a_database_created_before_migration_three_loads_without_inputs(tmp_path: Path) -> None:
+    path = tmp_path / "v2.db"
+    conn = sqlite3.connect(path)
+    migrate(conn, MIGRATIONS[:2])
+    conn.execute(
+        "INSERT INTO runs VALUES ('old2', 's', 'm', '2026-01-01T00:00:00.000000+00:00', NULL)"
+    )
+    conn.execute(
+        "INSERT INTO case_results (run_id, position, case_id, passed, scores_json) "
+        "VALUES ('old2', 0, 'c', 1, '[]')"
+    )
+    conn.commit()
+    assert schema_version(conn) == 2
+    conn.close()
+    with RunStore(path) as store:
+        assert store.get_run("old2").results[0].input == ()
+        store.save_run(
+            RunResult(
+                run_id="new2",
+                suite_name="s",
+                model="m",
+                started_at=T0,
+                results=(CaseResult(case_id="a", input=(Message(role="user", content="q"),)),),
+            )
+        )
+        assert store.get_run("new2").results[0].input[0].content == "q"
+    assert schema_version(sqlite3.connect(path)) == 3
