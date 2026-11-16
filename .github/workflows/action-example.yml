@@ -40,3 +40,26 @@ jobs:
           echo "outcome=${{ steps.gate.outcome }} exit-code=${{ steps.gate.outputs.exit-code }}"
           test "${{ steps.gate.outcome }}" = "failure"
           test "${{ steps.gate.outputs.exit-code }}" = "1"
+
+  no-change-passes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install agentgauge-eval==0.3.0
+      - name: Store the same suite twice
+        run: |
+          agentgauge run examples/regression/baseline.yaml --db runs.db
+          agentgauge run examples/regression/baseline.yaml --db runs.db
+      - name: Compare with the action; this step must pass
+        id: gate
+        uses: ./
+        with:
+          baseline: previous
+          candidate: latest
+          db: runs.db
+          version: "0.3.0"
+      - name: The exit code must be 0
+        run: test "${{ steps.gate.outputs.exit-code }}" = "0"
