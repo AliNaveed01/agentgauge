@@ -50,7 +50,7 @@ Significance needs enough cases that changed. With no improvements at all, six r
 
 ## In CI
 
-The [`action.yml`](../action.yml) at the root of this repository wraps `compare` as a GitHub Action: it installs `agentgauge-eval`, writes the markdown report to the job summary, and fails the job only on exit code 1; a setup problem (exit code 2) fails with a different message. [`examples/github-action/regression.yml`](../examples/github-action/regression.yml) shows the whole workflow: run the suite on the base branch and on the pull request into one database, then compare `previous` with `latest`. Pin the action to a release tag that contains `action.yml`; `@main` is for trying it out.
+The [`action.yml`](../action.yml) at the root of this repository wraps `compare` as a GitHub Action: it installs `agentgauge-eval`, writes the markdown report to the job summary, and fails the job only on exit code 1; a setup problem (exit code 2) fails with a different message. [`examples/github-action/regression.yml`](../examples/github-action/regression.yml) shows the whole workflow: run the suite on the base branch and on the pull request into one database, then compare `previous` with `latest`. Pin the action to a release tag (`@v0.3.0` is the first that contains it). It is run for real on GitHub, against `examples/regression`, whenever `action.yml` changes: a regression must fail the step with exit code 1, an unchanged comparison must pass with 0, and a setup problem must fail with 2 ([`action-example.yml`](../.github/workflows/action-example.yml)).
 
 ## Limits
 

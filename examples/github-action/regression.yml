@@ -35,8 +35,9 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: agentgauge run evals/suite.yaml --db "$GITHUB_WORKSPACE/runs.db"
 
-      # Pin to a release tag that contains action.yml once one exists; main is for trying it.
-      - uses: AliNaveed01/agentgauge@main
+      # Pin to a release tag. The action is exercised on every change to it, see
+      # .github/workflows/action-example.yml.
+      - uses: AliNaveed01/agentgauge@v0.3.0
         with:
           baseline: previous
           candidate: latest
