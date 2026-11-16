@@ -31,3 +31,25 @@ jobs:
         run: uv sync --python 3.12 --only-group docs
       - name: Build the site, failing on any warning
         run: uv run --only-group docs mkdocs build --strict
+      - name: Package the site for Pages
+        if: github.event_name == 'push' && vars.DOCS_DEPLOY == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  # Publishing needs Pages switched on in the repository settings (source: GitHub Actions)
+  # and a repository variable DOCS_DEPLOY set to "true". Until then the build above still
+  # runs and this job is skipped, so merging this workflow cannot turn main red.
+  deploy:
+    if: github.event_name == 'push' && vars.DOCS_DEPLOY == 'true'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
