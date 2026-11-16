@@ -305,3 +305,11 @@ def test_agent_config_bounds_and_suite_fields() -> None:
     assert suite.agent is not None and suite.agent.max_steps == 3
     assert suite.tool_mocks[0].arguments is None
     assert Suite(name="s", cases=()).agent is None
+
+
+def test_case_result_input_defaults_to_empty_and_keeps_messages() -> None:
+    assert CaseResult(case_id="c").input == ()
+    messages = (Message(role="system", content="be brief"), Message(role="user", content="hi"))
+    result = CaseResult(case_id="c", input=messages)
+    assert result.input == messages
+    assert CaseResult.model_validate_json(result.model_dump_json()) == result

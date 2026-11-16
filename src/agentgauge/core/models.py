@@ -283,10 +283,12 @@ class CaseResult(_Model):
 
     ``latency_ms`` is the wall-clock time the runner spent getting the output
     (including provider retries), also recorded when the case failed;
-    ``cost_usd`` comes from the provider's output when it reports one.
+    ``cost_usd`` comes from the provider's output when it reports one. ``input`` is what
+    the case sent to the model; it is empty for results stored before inputs were kept.
     """
 
     case_id: str
+    input: tuple[Message, ...] = ()
     output: ModelOutput | None = None
     scores: tuple[Score, ...] = ()
     error: str | None = None
