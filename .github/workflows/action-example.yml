@@ -63,3 +63,26 @@ jobs:
           version: "0.3.0"
       - name: The exit code must be 0
         run: test "${{ steps.gate.outputs.exit-code }}" = "0"
+
+  setup-problem-is-not-a-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install agentgauge-eval==0.3.0
+      - run: agentgauge run examples/regression/baseline.yaml --db runs.db
+      - name: Compare with a run that does not exist
+        id: gate
+        uses: ./
+        continue-on-error: true
+        with:
+          baseline: no-such-run
+          candidate: latest
+          db: runs.db
+          version: "0.3.0"
+      - name: It must fail with exit code 2, not 1
+        run: |
+          test "${{ steps.gate.outcome }}" = "failure"
+          test "${{ steps.gate.outputs.exit-code }}" = "2"
