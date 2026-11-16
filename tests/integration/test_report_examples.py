@@ -56,3 +56,27 @@ def test_an_agent_run_report_shows_the_trajectories(tmp_path: Path) -> None:
     assert html.count("Agent trajectory") == 4
     assert "cut off at the step limit" in html  # the never-finishes case
     assert "-&gt; search_flights" in html and "Tool result" in html
+
+
+def test_a_run_stored_before_inputs_were_kept_still_reports(tmp_path: Path) -> None:
+    import sqlite3
+
+    from agentgauge.storage.migrations import MIGRATIONS, migrate
+
+    path = tmp_path / "old.db"
+    conn = sqlite3.connect(path)
+    migrate(conn, MIGRATIONS[:2])  # the schema before case inputs existed
+    conn.execute(
+        "INSERT INTO runs VALUES ('olda', 'demo', 'm', '2026-01-01T00:00:00.000000+00:00', NULL)"
+    )
+    conn.execute(
+        "INSERT INTO case_results (run_id, position, case_id, passed, output_json, scores_json) "
+        "VALUES ('olda', 0, 'c', 1, '{\"text\": \"Paris\", \"latency_ms\": 1.0}', '[]')"
+    )
+    conn.commit()
+    conn.close()
+    target = tmp_path / "old.html"
+    result = runner.invoke(app, ["report", "olda", "--db", str(path), "--output", str(target)])
+    assert result.exit_code == 0, result.output
+    html = target.read_text()
+    assert "Input was not recorded for this run." in html and "<pre>Paris</pre>" in html
