@@ -1,7 +1,9 @@
 import json
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
+import typer.main
 from typer.testing import CliRunner
 
 from agentgauge.cli import app
@@ -157,3 +159,9 @@ def test_an_unusable_database_exits_2(tmp_path: Path) -> None:
     broken.mkdir()
     result = runner.invoke(app, ["compare", "a", "b", "--db", str(broken)])
     assert result.exit_code == 2
+
+
+def test_the_arguments_are_named_in_capitals_like_the_other_commands() -> None:
+    group: Any = typer.main.get_command(app)
+    metavars = {p.name: p.metavar for p in group.commands["compare"].params if p.metavar}
+    assert metavars == {"baseline": "BASELINE", "candidate": "CANDIDATE"}
