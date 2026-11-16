@@ -27,3 +27,15 @@ uv run pre-commit install
 ```bash
 uv run ruff check --fix . && uv run ruff format . && uv run pyright && uv run pytest
 ```
+
+## Documentation
+
+The docs are Markdown in `docs/`, built into a site with MkDocs Material from the separate `docs` dependency group (it is not needed to run or test agentgauge):
+
+```bash
+uv sync --group docs
+uv run mkdocs serve              # live preview at http://127.0.0.1:8000
+uv run mkdocs build --strict     # what CI runs: any warning fails the build
+```
+
+A new page goes in the `nav` of `mkdocs.yml`, a new command in `docs/cli.md`, and a new decision in `docs/adr/` (the decisions page lists them by itself). Tests fail if a command or option is undocumented, a relative link is broken, or a page is missing from the navigation. Link to files outside `docs/` with their GitHub URL, not a relative path, or the strict build fails.
