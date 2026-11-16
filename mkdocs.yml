@@ -46,3 +46,10 @@ nav:
   - Getting started:
       - Quickstart: quickstart.md
       - Writing a suite: suites.md
+  - Guides:
+      - Judge calibration: calibration.md
+      - Agent trajectories: trajectories.md
+      - Regression comparison: regression.md
+      - HTML report: report.md
+  - Benchmarks:
+      - Small local models: benchmarks/README.md
