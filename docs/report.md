@@ -15,7 +15,7 @@ A finished example is in [`docs/examples/regression-report.html`](examples/regre
 - **Summary:** suite, model, run id, start time and duration; counts of passed, failed and errored cases; pass rate, mean latency and cost when there is one.
 - **Comparison (with `--baseline`):** the verdict, the change in words, a chart of the pass-rate change with its 95% interval against zero, the metrics table, and the cases that regressed or improved, each linking to its detail. These are the numbers `agentgauge compare` prints; see [regression comparison](regression.md).
 - **Cases:** a table with status, scores, latency and the reason for a failure.
-- **Case detail:** each case expands to show the output, tool calls, every score with its reason, any error, and for an agent run each step: the model's text, its tool calls, the tool results, and how it ended.
+- **Case detail:** each case expands to show the input (what the case sent to the model), the output, tool calls, every score with its reason, any error, and for an agent run each step: the model's text, its tool calls, the tool results, and how it ended.
 
 ## Options
 
@@ -37,7 +37,7 @@ Model output is untrusted, so the report never puts it into the page as markup: 
 
 ## Limits
 
-- The prompt of each case is not stored with a run, so the report shows what the model answered but not what it was asked.
+- Runs stored before case inputs were recorded did not keep them, so their reports say "Input was not recorded for this run". [ADR 0019](adr/0019-record-case-inputs.md) explains the change.
 - There is no sorting or filtering in the page, because there is no script. A suite of several hundred cases is a long page.
 - Closed case sections do not print; use `--expand` for a printable file.
 
