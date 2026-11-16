@@ -1,0 +1,33 @@
+name: docs
+
+on:
+  pull_request:
+    paths: &paths
+      - docs/**
+      - mkdocs.yml
+      - mkdocs_hooks/**
+      - pyproject.toml
+      - uv.lock
+      - .github/workflows/docs.yml
+  push:
+    branches: [main]
+    paths: *paths
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Install Python
+        run: uv python install 3.12
+      - name: Sync docs dependencies
+        run: uv sync --python 3.12 --only-group docs
+      - name: Build the site, failing on any warning
+        run: uv run --only-group docs mkdocs build --strict
