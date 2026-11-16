@@ -17,7 +17,7 @@ What happens when you point agentgauge at small models on a laptop: can they pic
 - **Kappa** is the model acting as judge on 30 answers a human labelled (see [calibration](../calibration.md)). agentgauge warns below 0.6.
 - **Agent pass rate** is the share of 12 single-decision prompts handled correctly: 9 that need one specific tool call, and 3 where the right move is to call nothing.
 - **Tool-call accuracy** is the share of the 9 that need a call where the model made exactly the right call with the right arguments.
-- **Loop pass rate** is the share of 8 multi-step tasks (see [`agent_loop_suite.yaml`](../../benchmarks/data/agent_loop_suite.yaml)) where the model made exactly the expected sequence of calls, within three calls, and finished. Tool results are scripted, so only the model varies.
+- **Loop pass rate** is the share of 8 multi-step tasks (see [`agent_loop_suite.yaml`](https://github.com/AliNaveed01/agentgauge/blob/main/benchmarks/data/agent_loop_suite.yaml)) where the model made exactly the expected sequence of calls, within three calls, and finished. Tool results are scripted, so only the model varies.
 - **Mean latency** is per case over the 12 single-decision prompts, run one at a time. Per loop task the means were 5595 ms and 452 ms for the 0.6b with thinking on and off, and 18426 ms and 28298 ms for the 4b.
 
 ## Interpretation
@@ -68,7 +68,7 @@ done
 uv run python scripts/plot_kappa.py
 ```
 
-The benchmark is [`benchmarks/run_benchmark.py`](../../benchmarks/run_benchmark.py), the chart is drawn by [`scripts/plot_kappa.py`](../../scripts/plot_kappa.py) (matplotlib, a dev dependency), the data is in [`benchmarks/data/`](../../benchmarks/data/), and every per-case result, including each tool call and each loop route, is in [`results/`](results/). `qwen3-0.6b.json` is the original first run, kept as it was. Designs: [ADR 0013](../adr/0013-tool-use-benchmark.md) and [ADR 0016](../adr/0016-extended-benchmark.md).
+The benchmark is [`benchmarks/run_benchmark.py`](https://github.com/AliNaveed01/agentgauge/blob/main/benchmarks/run_benchmark.py), the chart is drawn by [`scripts/plot_kappa.py`](https://github.com/AliNaveed01/agentgauge/blob/main/scripts/plot_kappa.py) (matplotlib, a dev dependency), the data is in [`benchmarks/data/`](https://github.com/AliNaveed01/agentgauge/tree/main/benchmarks/data), and every per-case result, including each tool call and each loop route, is in [`results/`](https://github.com/AliNaveed01/agentgauge/tree/main/docs/benchmarks/results). `qwen3-0.6b.json` is the original first run, kept as it was. Designs: [ADR 0013](../adr/0013-tool-use-benchmark.md) and [ADR 0016](../adr/0016-extended-benchmark.md).
 
 ## Limits
 
