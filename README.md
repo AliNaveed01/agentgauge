@@ -144,6 +144,10 @@ For a local server, add `--base-url http://localhost:8000/v1`; no key is needed.
 
 `run` exits 0 whenever the run completes, even if cases fail or error: those are shown in the table. It exits 2 for configuration problems (unreadable or invalid suite, unknown scorer, bad provider options, a missing API key variable, an unusable database). `runs show` exits 1 for an unknown or ambiguous run id. `calibrate --fail-under` exits 1 when kappa is below the threshold. `compare` exits 0 when there is no significant regression, 1 on a significant regression, and 2 when the comparison cannot be made (unknown or ambiguous run, no shared cases, bad options, unusable database).
 
+## Documentation
+
+The docs live in [`docs/`](docs) and build into a site with MkDocs Material (`uv sync --group docs && uv run mkdocs serve`): [quickstart](docs/quickstart.md), [writing a suite](docs/suites.md), [judge calibration](docs/calibration.md), [agent trajectories](docs/trajectories.md), [regression comparison](docs/regression.md), the [HTML report](docs/report.md), the [command reference](docs/cli.md), the [benchmarks](docs/benchmarks/README.md) and the [decision records](docs/decisions.md).
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Design decisions are recorded in [docs/adr](docs/adr).
