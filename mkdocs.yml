@@ -51,5 +51,7 @@ nav:
       - Agent trajectories: trajectories.md
       - Regression comparison: regression.md
       - HTML report: report.md
+  - Reference:
+      - Command reference: cli.md
   - Benchmarks:
       - Small local models: benchmarks/README.md
