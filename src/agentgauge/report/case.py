@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from agentgauge.core.models import CaseResult, Score, ToolCall, Trajectory
+from agentgauge.core.models import CaseResult, Message, Score, ToolCall, Trajectory
 from agentgauge.report.html import Markup, join, tag
 
 
@@ -43,6 +43,17 @@ def scores_table(scores: tuple[Score, ...]) -> Markup:
 
 def tool_call_lines(calls: tuple[ToolCall, ...]) -> str:
     return "\n".join(f"{call.name} {call.arguments}" for call in calls)
+
+
+def input_text(messages: tuple[Message, ...]) -> str:
+    """The messages a case sent, one paragraph each, led by the role."""
+    paragraphs: list[str] = []
+    for message in messages:
+        text = f"{message.role}: {message.content}"
+        if message.tool_calls:
+            text += "\n" + tool_call_lines(message.tool_calls)
+        paragraphs.append(text)
+    return "\n\n".join(paragraphs)
 
 
 def trajectory_section(trajectory: Trajectory) -> Markup:
@@ -96,6 +107,10 @@ def case_detail(index: int, result: CaseResult, *, expand: bool = False) -> Mark
         tag("code", result.case_id),
     )
     parts: list[Markup] = []
+    if result.input:
+        parts.append(block("Input", input_text(result.input)))
+    else:
+        parts.append(tag("p", "Input was not recorded for this run.", class_="muted"))
     if result.error is not None:
         parts.append(block("Error", result.error))
     output = result.output

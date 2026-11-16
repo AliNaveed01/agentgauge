@@ -41,6 +41,7 @@ def test_a_fresh_report_from_the_regression_example(tmp_path: Path) -> None:
     assert_self_contained(html)
     assert html.count('<details class="case"') == 12
     assert "McNemar p = 0.0156" in html
+    assert "user: What is the capital of Japan?" in html
 
 
 def test_an_agent_run_report_shows_the_trajectories(tmp_path: Path) -> None:

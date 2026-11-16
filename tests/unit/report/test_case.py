@@ -2,6 +2,7 @@ from agentgauge.core.models import CaseResult, Message, ModelOutput, Score, Tool
 from agentgauge.report.case import (
     block,
     case_detail,
+    input_text,
     scores_table,
     tool_call_lines,
     trajectory_section,
@@ -140,3 +141,32 @@ def test_case_detail_includes_the_trajectory_of_an_agent_run() -> None:
     out = case_detail(0, CaseResult(case_id="agent", output=output))
     assert "Agent trajectory" in out and "Tool result" in out
     assert "Agent trajectory" not in case_detail(0, full_result())
+
+
+def test_the_input_is_shown_first_with_roles() -> None:
+    messages = (
+        Message(role="system", content="be brief"),
+        Message(role="user", content="What is the capital of France?"),
+    )
+    out = case_detail(0, CaseResult(case_id="c", input=messages, error="boom"))
+    assert "<pre>system: be brief\n\nuser: What is the capital of France?</pre>" in out
+    assert out.index("Input") < out.index("Error")
+
+
+def test_a_result_without_an_input_says_so_instead_of_showing_nothing() -> None:
+    out = case_detail(0, CaseResult(case_id="old"))
+    assert (
+        '<p class="muted">Input was not recorded for this run.</p>' in out
+        and "Input</div>" not in out
+    )
+
+
+def test_input_with_tool_calls_lists_them_and_is_escaped() -> None:
+    call = ToolCall(id="1", name=HOSTILE, arguments=HOSTILE)
+    messages = (
+        Message(role="user", content=HOSTILE),
+        Message(role="assistant", content="", tool_calls=(call,)),
+    )
+    assert input_text(messages).endswith(f"{HOSTILE} {HOSTILE}")
+    out = case_detail(0, CaseResult(case_id="c", input=messages))
+    assert "<script" not in out and out.count("&lt;script&gt;") == 3
