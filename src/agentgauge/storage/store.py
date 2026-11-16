@@ -10,10 +10,18 @@ from typing import Self
 
 from pydantic import BaseModel, ConfigDict, TypeAdapter
 
-from agentgauge.core.models import CaseResult, ModelOutput, RunResult, Score, Trajectory
+from agentgauge.core.models import (
+    CaseResult,
+    Message,
+    ModelOutput,
+    RunResult,
+    Score,
+    Trajectory,
+)
 from agentgauge.storage.migrations import StorageError, migrate
 
 _SCORES = TypeAdapter(tuple[Score, ...])
+_MESSAGES = TypeAdapter(tuple[Message, ...])
 
 
 def _to_text(moment: datetime) -> str:
@@ -93,8 +101,8 @@ class RunStore:
                 )
                 self._conn.executemany(
                     "INSERT INTO case_results (run_id, position, case_id, passed, error, "
-                    "latency_ms, cost_usd, output_json, scores_json, trajectory_json) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "latency_ms, cost_usd, output_json, scores_json, trajectory_json, input_json) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     [
                         (
                             run.run_id,
@@ -107,6 +115,7 @@ class RunStore:
                             _output_json(result.output),
                             _scores_json(result.scores),
                             _trajectory_json(result.output),
+                            _input_json(result.input),
                         )
                         for position, result in enumerate(run.results)
                     ],
@@ -157,7 +166,7 @@ class RunStore:
         full_id, suite_name, model, started, finished = rows[0]
         cases = self._conn.execute(
             "SELECT case_id, error, latency_ms, cost_usd, output_json, scores_json, "
-            "trajectory_json FROM case_results WHERE run_id = ? ORDER BY position",
+            "trajectory_json, input_json FROM case_results WHERE run_id = ? ORDER BY position",
             (full_id,),
         ).fetchall()
         return RunResult(
@@ -169,6 +178,7 @@ class RunStore:
             results=tuple(
                 CaseResult(
                     case_id=case_id,
+                    input=_MESSAGES.validate_json(input_json) if input_json else (),
                     output=_load_output(output_json, trajectory_json),
                     scores=_SCORES.validate_json(scores_json),
                     error=error,
@@ -183,6 +193,7 @@ class RunStore:
                     output_json,
                     scores_json,
                     trajectory_json,
+                    input_json,
                 ) in cases
             ),
         )
@@ -195,6 +206,11 @@ def _scores_json(scores: tuple[Score, ...]) -> str:
 def _output_json(output: ModelOutput | None) -> str | None:
     """The output without its trajectory, which has a column of its own."""
     return output.model_dump_json(exclude={"trajectory"}) if output else None
+
+
+def _input_json(messages: tuple[Message, ...]) -> str | None:
+    """The case input, or ``None`` when there is none (results from before inputs were kept)."""
+    return _MESSAGES.dump_json(messages).decode() if messages else None
 
 
 def _trajectory_json(output: ModelOutput | None) -> str | None:

@@ -36,7 +36,15 @@ _ADD_TRAJECTORY = """
 ALTER TABLE case_results ADD COLUMN trajectory_json TEXT;
 """
 
-MIGRATIONS: tuple[Migration, ...] = ((1, _INITIAL_SCHEMA), (2, _ADD_TRAJECTORY))
+_ADD_INPUT = """
+ALTER TABLE case_results ADD COLUMN input_json TEXT;
+"""
+
+MIGRATIONS: tuple[Migration, ...] = (
+    (1, _INITIAL_SCHEMA),
+    (2, _ADD_TRAJECTORY),
+    (3, _ADD_INPUT),
+)
 
 
 class StorageError(Exception):
