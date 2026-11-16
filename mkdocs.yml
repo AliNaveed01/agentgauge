@@ -43,3 +43,5 @@ validation:
 
 nav:
   - Home: index.md
+  - Getting started:
+      - Quickstart: quickstart.md
