@@ -23,7 +23,7 @@ A table in a terminal is enough to gate a pull request, but not to look through 
 
 ## Consequences
 
-- A run does not store its case inputs, so the report shows outputs, scores, errors and trajectories but not the prompt. Showing prompts needs the suite file at report time or a storage change; it is left for later.
+- Runs stored at the time did not keep their case inputs, so this report could not show the prompt. [ADR 0019](0019-record-case-inputs.md) records them from then on.
 - Everything is inlined, so a run with very large outputs makes a large file. Long text is kept whole inside scrollable blocks rather than truncated.
 - Without JavaScript the report cannot sort or filter its table. For large suites that is a real limit.
 - Closed `<details>` do not print; `--expand` exists for that.
