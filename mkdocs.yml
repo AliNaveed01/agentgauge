@@ -45,3 +45,4 @@ nav:
   - Home: index.md
   - Getting started:
       - Quickstart: quickstart.md
+      - Writing a suite: suites.md
