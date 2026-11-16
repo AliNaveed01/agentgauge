@@ -32,9 +32,12 @@ markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences
 
+hooks:
+  - mkdocs_hooks/adr_index.py
+
 validation:
   nav:
-    omitted_files: warn
+    omitted_files: info # decision records are listed on the decisions page, not in the nav
     not_found: warn
   links:
     not_found: warn
@@ -53,5 +56,6 @@ nav:
       - HTML report: report.md
   - Reference:
       - Command reference: cli.md
+  - Decisions: decisions.md
   - Benchmarks:
       - Small local models: benchmarks/README.md

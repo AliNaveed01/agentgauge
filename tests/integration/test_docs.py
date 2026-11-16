@@ -1,5 +1,6 @@
 """The docs cannot drift from the code: every command is documented, every link resolves."""
 
+import importlib.util
 import re
 from pathlib import Path
 from typing import Any
@@ -72,3 +73,39 @@ def test_every_page_in_the_site_navigation_exists_and_every_guide_is_in_it() -> 
         assert (DOCS / page).exists(), f"nav lists {page}, which does not exist"
     for guide in DOCS.glob("*.md"):
         assert guide.name in listed, f"docs/{guide.name} is not in the site navigation"
+
+
+def load_hook() -> Any:
+    spec = importlib.util.spec_from_file_location(
+        "adr_index", ROOT / "mkdocs_hooks" / "adr_index.py"
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_the_decisions_page_lists_every_record_in_order() -> None:
+    hook = load_hook()
+    files = sorted(p.name for p in (DOCS / "adr").glob("[0-9]*.md"))
+    listing = hook.render_index(DOCS / "adr")
+    links = re.findall(r"\]\(adr/([^)]+)\)", listing)
+    assert links == files and len(files) >= 18
+    assert "- [13. Tool-use benchmark](adr/0013-tool-use-benchmark.md)" in listing
+
+
+def test_the_hook_only_touches_the_decisions_page() -> None:
+    hook = load_hook()
+
+    class File:
+        def __init__(self, src: str) -> None:
+            self.src_path = src
+
+    class Page:
+        def __init__(self, src: str) -> None:
+            self.file = File(src)
+
+    config = {"docs_dir": str(DOCS)}
+    assert hook.on_page_markdown("text", Page("index.md"), config, None) == "text"
+    out = hook.on_page_markdown("# Decisions\n", Page("decisions.md"), config, None)
+    assert out.startswith("# Decisions") and "](adr/0001-record-architecture-decisions.md)" in out
