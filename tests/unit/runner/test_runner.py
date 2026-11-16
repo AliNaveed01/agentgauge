@@ -300,3 +300,34 @@ def test_score_output_without_scorers_is_empty_and_clean() -> None:
 
     case = TestCase(id="c", input="q")
     assert asyncio.run(score_output(case, ModelOutput(text="a", latency_ms=0), [])) == ((), None)
+
+
+def test_every_result_keeps_the_input_the_case_sent() -> None:
+    suite = Suite(
+        name="s",
+        cases=(
+            TestCase(id="ok", input="q0", expected="a0"),
+            TestCase(
+                id="chat",
+                input=(  # type: ignore[arg-type]
+                    {"role": "system", "content": "be brief"},
+                    {"role": "user", "content": "q1"},
+                ),
+                expected="a1",
+            ),
+            TestCase(id="broken", input="q2", expected="a2"),
+        ),
+        scorers=("exact_match",),
+    )
+    provider = FakeProvider(
+        {"q0": "a0", "q1": "a1"}, errors={"q2": RuntimeError("down")}, name="fake-model"
+    )
+    run = asyncio.run(run_suite(suite, provider))
+    by_id = {r.case_id: r for r in run.results}
+    assert [m.content for m in by_id["ok"].input] == ["q0"]
+    assert [(m.role, m.content) for m in by_id["chat"].input] == [
+        ("system", "be brief"),
+        ("user", "q1"),
+    ]
+    assert by_id["broken"].error is not None
+    assert [m.content for m in by_id["broken"].input] == ["q2"]

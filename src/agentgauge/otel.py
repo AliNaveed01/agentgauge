@@ -307,6 +307,7 @@ async def score_imported(suite: Suite, traces: list[ImportedTrace], path: Path) 
             results.append(
                 CaseResult(
                     case_id=trace.case_id,
+                    input=cases[trace.case_id].input,
                     output=trace.output,
                     scores=scores,
                     error=error,

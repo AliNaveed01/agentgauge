@@ -95,12 +95,16 @@ async def _run_case(
             output = await provider.complete(request)
     except Exception as exc:  # one failing case must never kill the run
         return CaseResult(
-            case_id=case.id, error=_describe(exc), latency_ms=(clock() - start) * 1000
+            case_id=case.id,
+            input=case.input,
+            error=_describe(exc),
+            latency_ms=(clock() - start) * 1000,
         )
     latency_ms = (clock() - start) * 1000
     scores, error = await score_output(case, output, scorers)
     return CaseResult(
         case_id=case.id,
+        input=case.input,
         output=output,
         scores=scores,
         error=error,

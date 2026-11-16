@@ -250,6 +250,7 @@ def test_imported_traces_are_scored_into_a_run(tmp_path: Path) -> None:
     assert (result.case_id, result.passed, result.error) == ("weather", True, None)
     assert result.latency_ms == pytest.approx(1000.0)
     assert result.output is not None and result.output.trajectory is not None
+    assert [m.content for m in result.input] == ["q"]  # the suite's input for that case
     assert run.finished_at is not None
 
 
