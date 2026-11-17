@@ -4,7 +4,7 @@ agentgauge is an open-source regression-testing harness for LLM agents. It answe
 
 **Status: pre-alpha**
 
-**What works today:** define a suite of test cases in YAML or JSONL, run it against any OpenAI-compatible model, score it with deterministic scorers, an LLM judge calibrated against human labels, and tool-call trajectory scorers, store and inspect the runs, import OpenTelemetry traces, compare two runs with a significance test, locally or as a GitHub Action, and write a run as an HTML report. **Not built yet:** the demo GIF (v1.0).
+**What works today:** define a suite of test cases in YAML or JSONL, run it against any OpenAI-compatible model, score it with deterministic scorers, an LLM judge calibrated against human labels, and tool-call trajectory scorers, store and inspect the runs, import OpenTelemetry traces, compare two runs with a significance test, locally or as a GitHub Action, and write a run as an HTML report.
 
 ![Terminal demo: run a baseline and a candidate, compare them, write the report](docs/assets/demo.gif)
 
