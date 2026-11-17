@@ -50,6 +50,7 @@ nav:
       - Quickstart: quickstart.md
       - Writing a suite: suites.md
   - Guides:
+      - Worked example: worked-example.md
       - Judge calibration: calibration.md
       - Agent trajectories: trajectories.md
       - Regression comparison: regression.md
