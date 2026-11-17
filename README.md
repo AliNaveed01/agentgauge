@@ -6,6 +6,10 @@ agentgauge is an open-source regression-testing harness for LLM agents. It answe
 
 **What works today:** define a suite of test cases in YAML or JSONL, run it against any OpenAI-compatible model, score it with deterministic scorers, an LLM judge calibrated against human labels, and tool-call trajectory scorers, store and inspect the runs, import OpenTelemetry traces, compare two runs with a significance test, locally or as a GitHub Action, and write a run as an HTML report. **Not built yet:** the demo GIF (v1.0).
 
+![Terminal demo: run a baseline and a candidate, compare them, write the report](docs/assets/demo.gif)
+
+The demo runs two versions of a small suite, compares them (a significant regression, exit code 1) and writes the HTML report. It is drawn by [`scripts/make_demo_gif.py`](scripts/make_demo_gif.py) from the commands' real output.
+
 ## Quickstart
 
 You need Python 3.12 or newer and [uv](https://docs.astral.sh/uv/). Install it from PyPI (the package is `agentgauge-eval`, the command is `agentgauge`):
