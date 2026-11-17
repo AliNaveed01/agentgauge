@@ -1,0 +1,190 @@
+# A worked example with a real model: an order-support agent that must look an order up before
+# it acts on it. Tool results are scripted (tool_mocks), so the only thing that varies between
+# runs is the model. Needs a local Ollama server; see docs/worked-example.md.
+#
+#   agentgauge run examples/real-agent/suite.yaml --model qwen3:4b
+#   agentgauge run examples/real-agent/suite.yaml --model qwen3:0.6b
+#   agentgauge compare previous latest
+name: order-support
+description: Ten support requests. The agent may only refund an order that was delivered.
+
+provider:
+  type: openai_compat
+  model: qwen3:4b
+  base_url: http://localhost:11434/v1
+  params: {temperature: 0, seed: 42, max_tokens: 2048}
+
+tools:
+  - name: lookup_order
+    description: Look up an order by id. Returns its status and details.
+    parameters:
+      type: object
+      properties:
+        order_id: {type: string, description: "The order id, such as A100"}
+      required: [order_id]
+  - name: refund_order
+    description: Refund an order. Only call this for an order whose status is delivered.
+    parameters:
+      type: object
+      properties:
+        order_id: {type: string}
+        reason: {type: string, description: Why the customer wants a refund}
+      required: [order_id, reason]
+
+tool_mocks:
+  - {tool: lookup_order, arguments: {order_id: A100}, result: "A100: delivered on 2026-11-01, total $40.00"}
+  - {tool: lookup_order, arguments: {order_id: B200}, result: "B200: shipped, arrives 2026-11-20, total $85.00"}
+  - {tool: lookup_order, arguments: {order_id: C300}, result: "C300: refunded on 2026-10-30, total $15.00"}
+  - {tool: lookup_order, arguments: {order_id: D400}, result: "D400: delivered on 2026-11-05, total $120.00"}
+  - {tool: refund_order, result: "Refund issued."}
+
+agent:
+  max_steps: 6
+
+scorers:
+  - name: trajectory_match
+    params: {mode: exact, check_args: false}
+  - name: trajectory_budget
+    params: {max_calls: 3}
+
+cases:
+  - id: refund-delivered
+    input:
+      - role: system
+        content: >-
+          You are a support agent for an online shop. Always look an order up with lookup_order
+          before you tell the customer anything about it or act on it. Only refund an order
+          whose status is delivered, using refund_order. Never refund an order that is not
+          delivered or was already refunded. Keep replies short.
+      - role: user
+        content: "Please refund order A100, it arrived damaged."
+    metadata:
+      expected_trajectory:
+        - {name: lookup_order}
+        - {name: refund_order}
+
+  - id: refund-shipped-refused
+    input:
+      - role: system
+        content: >-
+          You are a support agent for an online shop. Always look an order up with lookup_order
+          before you tell the customer anything about it or act on it. Only refund an order
+          whose status is delivered, using refund_order. Never refund an order that is not
+          delivered or was already refunded. Keep replies short.
+      - role: user
+        content: "I want my money back for order B200 right now."
+    metadata:
+      expected_trajectory:
+        - {name: lookup_order}
+
+  - id: status-question
+    input:
+      - role: system
+        content: >-
+          You are a support agent for an online shop. Always look an order up with lookup_order
+          before you tell the customer anything about it or act on it. Only refund an order
+          whose status is delivered, using refund_order. Never refund an order that is not
+          delivered or was already refunded. Keep replies short.
+      - role: user
+        content: "Where is my order B200?"
+    metadata:
+      expected_trajectory:
+        - {name: lookup_order}
+
+  - id: already-refunded
+    input:
+      - role: system
+        content: >-
+          You are a support agent for an online shop. Always look an order up with lookup_order
+          before you tell the customer anything about it or act on it. Only refund an order
+          whose status is delivered, using refund_order. Never refund an order that is not
+          delivered or was already refunded. Keep replies short.
+      - role: user
+        content: "Refund order C300 for me."
+    metadata:
+      expected_trajectory:
+        - {name: lookup_order}
+
+  - id: policy-question
+    input:
+      - role: system
+        content: >-
+          You are a support agent for an online shop. Always look an order up with lookup_order
+          before you tell the customer anything about it or act on it. Only refund an order
+          whose status is delivered, using refund_order. Never refund an order that is not
+          delivered or was already refunded. Keep replies short.
+      - role: user
+        content: "What is your refund policy?"
+    metadata:
+      expected_trajectory: []
+
+  - id: refund-second-delivered
+    input:
+      - role: system
+        content: >-
+          You are a support agent for an online shop. Always look an order up with lookup_order
+          before you tell the customer anything about it or act on it. Only refund an order
+          whose status is delivered, using refund_order. Never refund an order that is not
+          delivered or was already refunded. Keep replies short.
+      - role: user
+        content: "Order D400 is the wrong size. I would like a refund."
+    metadata:
+      expected_trajectory:
+        - {name: lookup_order}
+        - {name: refund_order}
+
+  - id: two-statuses
+    input:
+      - role: system
+        content: >-
+          You are a support agent for an online shop. Always look an order up with lookup_order
+          before you tell the customer anything about it or act on it. Only refund an order
+          whose status is delivered, using refund_order. Never refund an order that is not
+          delivered or was already refunded. Keep replies short.
+      - role: user
+        content: "Can you tell me the status of A100 and of B200?"
+    metadata:
+      expected_trajectory:
+        - {name: lookup_order}
+        - {name: lookup_order}
+
+  - id: greeting
+    input:
+      - role: system
+        content: >-
+          You are a support agent for an online shop. Always look an order up with lookup_order
+          before you tell the customer anything about it or act on it. Only refund an order
+          whose status is delivered, using refund_order. Never refund an order that is not
+          delivered or was already refunded. Keep replies short.
+      - role: user
+        content: "Hi there!"
+    metadata:
+      expected_trajectory: []
+
+  - id: refund-without-id
+    input:
+      - role: system
+        content: >-
+          You are a support agent for an online shop. Always look an order up with lookup_order
+          before you tell the customer anything about it or act on it. Only refund an order
+          whose status is delivered, using refund_order. Never refund an order that is not
+          delivered or was already refunded. Keep replies short.
+      - role: user
+        content: "I would like a refund for my last order."
+    metadata:
+      expected_trajectory: []
+
+  - id: refund-delivered-polite
+    input:
+      - role: system
+        content: >-
+          You are a support agent for an online shop. Always look an order up with lookup_order
+          before you tell the customer anything about it or act on it. Only refund an order
+          whose status is delivered, using refund_order. Never refund an order that is not
+          delivered or was already refunded. Keep replies short.
+      - role: user
+        content: "Hello, could you refund order A100? It was not what I expected."
+    metadata:
+      expected_trajectory:
+        - {name: lookup_order}
+        - {name: refund_order}
