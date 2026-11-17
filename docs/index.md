@@ -15,4 +15,4 @@ agentgauge --version
 
 The package is `agentgauge-eval`; the command and the import name are `agentgauge`. It needs Python 3.12 or newer.
 
-Start with the [quickstart](quickstart.md), or jump to what you need: [judge calibration](calibration.md), [agent trajectories](trajectories.md), [regression comparison](regression.md), the [HTML report](report.md), or the [benchmarks](benchmarks/README.md) of small local models.
+Start with the [quickstart](quickstart.md), or see a [worked example](worked-example.md) that swaps a model and asks whether the agent got worse. Or jump to what you need: [judge calibration](calibration.md), [agent trajectories](trajectories.md), [regression comparison](regression.md), the [HTML report](report.md), or the [benchmarks](benchmarks/README.md) of small local models.
