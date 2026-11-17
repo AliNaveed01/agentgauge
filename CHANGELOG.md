@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.4.0](https://github.com/AliNaveed01/agentgauge/compare/v0.3.0...v0.4.0) (2026-11-17)
+
+
+### Features
+
+* **core:** keep a case's input on its result ([4bfa502](https://github.com/AliNaveed01/agentgauge/commit/4bfa502655b1dfc7314f340ca9463a35f6c5b404)), closes [#57](https://github.com/AliNaveed01/agentgauge/issues/57)
+* **report:** show each case's input in the case detail ([7b9a8de](https://github.com/AliNaveed01/agentgauge/commit/7b9a8de9255eae57c12804a92ed001d42992cc1b)), closes [#57](https://github.com/AliNaveed01/agentgauge/issues/57)
+* **runner:** record each case's input in its result ([27d1ca9](https://github.com/AliNaveed01/agentgauge/commit/27d1ca94393eebe2c633646a2344e6053de7099a)), closes [#57](https://github.com/AliNaveed01/agentgauge/issues/57)
+* **storage:** persist case inputs in schema migration 3 ([dfa4efc](https://github.com/AliNaveed01/agentgauge/commit/dfa4efc458e51dcd61613680657c5b2eb5ea8066)), closes [#57](https://github.com/AliNaveed01/agentgauge/issues/57)
+
+
+### Bug Fixes
+
+* **cli:** name compare's arguments BASELINE and CANDIDATE in the help ([badaacd](https://github.com/AliNaveed01/agentgauge/commit/badaacd366a99251040ae4966e92485e109cf285)), closes [#64](https://github.com/AliNaveed01/agentgauge/issues/64)
+
+
+### Documentation
+
+* add the command reference, tested against the CLI ([5c4ece5](https://github.com/AliNaveed01/agentgauge/commit/5c4ece59abd537ed48914478fcbafb135a9fde82)), closes [#66](https://github.com/AliNaveed01/agentgauge/issues/66)
+* add the mkdocs site skeleton and landing page ([83c1661](https://github.com/AliNaveed01/agentgauge/commit/83c1661b8cda944b09d2c4198745cb36e0706abe)), closes [#66](https://github.com/AliNaveed01/agentgauge/issues/66)
+* add the quickstart page ([bb1f3d7](https://github.com/AliNaveed01/agentgauge/commit/bb1f3d774a0330507bd588b0fa9cea876cd280d5)), closes [#66](https://github.com/AliNaveed01/agentgauge/issues/66)
+* add the writing-a-suite page with the scorer table ([9ceeb3f](https://github.com/AliNaveed01/agentgauge/commit/9ceeb3feba98f694ec9b7abcd19e4375e48d2ee3)), closes [#66](https://github.com/AliNaveed01/agentgauge/issues/66)
+* link repository files by URL so the site builds strictly ([790ae4d](https://github.com/AliNaveed01/agentgauge/commit/790ae4d5460c3c39a71e1a8167cf7e748a1e16dc)), closes [#66](https://github.com/AliNaveed01/agentgauge/issues/66)
+* list the decision records on the site, generated from the files ([18cc37e](https://github.com/AliNaveed01/agentgauge/commit/18cc37e6d500aac579ae54b67287e2ac5329f3e6)), closes [#66](https://github.com/AliNaveed01/agentgauge/issues/66)
+* pin the example workflow to the v0.3.0 tag and say the action runs in CI ([dd2a559](https://github.com/AliNaveed01/agentgauge/commit/dd2a55926e9cca3f4d0c2ebbe05ea12972827b09)), closes [#64](https://github.com/AliNaveed01/agentgauge/issues/64)
+* point the README at the docs ([14c51f8](https://github.com/AliNaveed01/agentgauge/commit/14c51f8a69b53c727ebba16945d3b2a2274a60a8)), closes [#66](https://github.com/AliNaveed01/agentgauge/issues/66)
+* put the guides and the benchmark in the site navigation ([0289202](https://github.com/AliNaveed01/agentgauge/commit/028920292cccc524622c108a7a0e6e9969ae6722)), closes [#66](https://github.com/AliNaveed01/agentgauge/issues/66)
+* record case inputs (ADR 0019) and refresh the example report ([b521d24](https://github.com/AliNaveed01/agentgauge/commit/b521d242607b6d6d2c604886596b2f3305b181cf)), closes [#57](https://github.com/AliNaveed01/agentgauge/issues/57)
+* say how to build and extend the docs site ([ee824cf](https://github.com/AliNaveed01/agentgauge/commit/ee824cfb896766f9ae01f05c43242ef7c8fb24f6)), closes [#66](https://github.com/AliNaveed01/agentgauge/issues/66)
+
 ## [0.3.0](https://github.com/AliNaveed01/agentgauge/compare/v0.2.0...v0.3.0) (2026-11-12)
 
 
