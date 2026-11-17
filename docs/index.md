@@ -8,6 +8,8 @@ agentgauge is an open-source regression-testing harness for LLM agents. It answe
 - It compares two runs with a significance test and fails a pull request only on a real regression.
 - It writes a run as one self-contained HTML report.
 
+![Terminal demo: run a baseline and a candidate, compare them, write the report](assets/demo.gif)
+
 ```bash
 pip install agentgauge-eval
 agentgauge --version
