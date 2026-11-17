@@ -4,7 +4,7 @@ agentgauge is an open-source regression-testing harness for LLM agents. It answe
 
 **Status: pre-alpha**
 
-**What works today:** define a suite of test cases in YAML or JSONL, run it against any OpenAI-compatible model, score it with deterministic scorers, an LLM judge calibrated against human labels, and tool-call trajectory scorers, store and inspect the runs, import OpenTelemetry traces, compare two runs with a significance test, locally or as a GitHub Action, and write a run as an HTML report. **Not built yet:** the docs site, the demo GIF and a worked example on a real agent (v1.0).
+**What works today:** define a suite of test cases in YAML or JSONL, run it against any OpenAI-compatible model, score it with deterministic scorers, an LLM judge calibrated against human labels, and tool-call trajectory scorers, store and inspect the runs, import OpenTelemetry traces, compare two runs with a significance test, locally or as a GitHub Action, and write a run as an HTML report. **Not built yet:** the demo GIF (v1.0).
 
 ## Quickstart
 
@@ -146,7 +146,7 @@ For a local server, add `--base-url http://localhost:8000/v1`; no key is needed.
 
 ## Documentation
 
-The docs live in [`docs/`](docs) and build into a site with MkDocs Material (`uv sync --group docs && uv run mkdocs serve`): [quickstart](docs/quickstart.md), [writing a suite](docs/suites.md), [judge calibration](docs/calibration.md), [agent trajectories](docs/trajectories.md), [regression comparison](docs/regression.md), the [HTML report](docs/report.md), the [command reference](docs/cli.md), the [benchmarks](docs/benchmarks/README.md) and the [decision records](docs/decisions.md).
+The docs live in [`docs/`](docs) and build into a site with MkDocs Material (`uv sync --group docs && uv run mkdocs serve`): [quickstart](docs/quickstart.md), a [worked example](docs/worked-example.md) of swapping a model, [writing a suite](docs/suites.md), [judge calibration](docs/calibration.md), [agent trajectories](docs/trajectories.md), [regression comparison](docs/regression.md), the [HTML report](docs/report.md), the [command reference](docs/cli.md), the [benchmarks](docs/benchmarks/README.md) and the [decision records](docs/decisions.md).
 
 ## Contributing
 
