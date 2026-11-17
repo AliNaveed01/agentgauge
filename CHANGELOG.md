@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.5.0](https://github.com/AliNaveed01/agentgauge/compare/v0.4.0...v0.5.0) (2026-11-17)
+
+
+### Features
+
+* **examples:** add an order-support agent suite for a real model ([51fc47d](https://github.com/AliNaveed01/agentgauge/commit/51fc47dd24bb4e5d764304f9f51e8a950efa319a)), closes [#69](https://github.com/AliNaveed01/agentgauge/issues/69)
+* **scripts:** draw the terminal demo GIF from real command output ([bdcb557](https://github.com/AliNaveed01/agentgauge/commit/bdcb557bd52ba59d34df22d09fb4a86eadf1e870)), closes [#70](https://github.com/AliNaveed01/agentgauge/issues/70)
+* **scripts:** parse terminal colour output for the demo GIF ([4798809](https://github.com/AliNaveed01/agentgauge/commit/4798809ac8460ec122769a7c365cf1ab3010c075)), closes [#70](https://github.com/AliNaveed01/agentgauge/issues/70)
+
+
+### Documentation
+
+* add the terminal demo GIF ([5835836](https://github.com/AliNaveed01/agentgauge/commit/58358369b552313ea44c53408b0c6397e1b40165)), closes [#70](https://github.com/AliNaveed01/agentgauge/issues/70)
+* add the worked example of swapping a model, with the real results ([1964d79](https://github.com/AliNaveed01/agentgauge/commit/1964d792c8db176f9f55ac65e2590f087677452c)), closes [#69](https://github.com/AliNaveed01/agentgauge/issues/69)
+* drop the demo GIF from the not-built list ([1d2c966](https://github.com/AliNaveed01/agentgauge/commit/1d2c9661dedb852ed59fa1652c68ffdfba04199e)), closes [#70](https://github.com/AliNaveed01/agentgauge/issues/70)
+* **examples:** add the HTML report of the two real runs ([302aae7](https://github.com/AliNaveed01/agentgauge/commit/302aae7aaa63f633c5a9dab56310937003efa29d)), closes [#69](https://github.com/AliNaveed01/agentgauge/issues/69)
+* link the worked example from the README and the landing page ([9bceb59](https://github.com/AliNaveed01/agentgauge/commit/9bceb59b933bc44de89bc867379641834e253110)), closes [#69](https://github.com/AliNaveed01/agentgauge/issues/69)
+* show the demo GIF in the README and on the landing page ([cebb3c5](https://github.com/AliNaveed01/agentgauge/commit/cebb3c5f7b63bb60214883dca6c7d974960989a0)), closes [#70](https://github.com/AliNaveed01/agentgauge/issues/70)
+
 ## [0.4.0](https://github.com/AliNaveed01/agentgauge/compare/v0.3.0...v0.4.0) (2026-11-17)
 
 
