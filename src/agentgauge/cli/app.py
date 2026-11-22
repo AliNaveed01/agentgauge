@@ -175,8 +175,14 @@ def run(
     console = Console()
     render_run(console, result)
     console.print(f"Stored as run {result.run_id[:8]} in {db}")
+    stats = summarize(result)
+    if stats.total and stats.errored == stats.total:
+        typer.echo(
+            "warning: every case errored, so nothing was scored. Check the model name, "
+            "the endpoint and the API key; the Detail column shows the first cause.",
+            err=True,
+        )
     if fail_under is not None:
-        stats = summarize(result)
         rate = stats.passed / stats.total if stats.total else 0.0
         if rate < fail_under:
             _fail(f"pass rate {rate:.2f} is below --fail-under {fail_under}", code=REGRESSION)
