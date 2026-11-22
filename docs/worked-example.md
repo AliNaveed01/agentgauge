@@ -4,7 +4,7 @@ A real agent, a real model, and a question you will meet: **if I replace the mod
 
 ## The agent
 
-An order-support agent with two tools, `lookup_order` and `refund_order`. Its system prompt says to always look an order up before saying or doing anything about it, and to refund only an order that was delivered. Ten requests test that: refunds that are allowed, a refund that is not (the order is still in transit), one for an order that was already refunded, a policy question, a greeting, and a refund request with no order id. Tool results are scripted, so the model is the only thing that changes between runs. Each case is scored on the exact sequence of tool calls and on staying within three calls. The suite is [`examples/real-agent/suite.yaml`](https://github.com/AliNaveed01/agentgauge/blob/main/examples/real-agent/suite.yaml).
+An order-support agent with two tools, `lookup_order` and `refund_order`. Its system prompt says to always look an order up before saying or doing anything about it, and to refund only an order that was delivered. Ten requests test that: refunds that are allowed, a refund that is not (the order is still in transit), one for an order that was already refunded, a policy question, a greeting, and a refund request with no order id. Tool results are scripted, so the model is the only thing that changes between runs. Each case is scored on the exact sequence of tool calls, with the order id of each call checked, and on staying within three calls. The suite is [`examples/real-agent/suite.yaml`](https://github.com/AliNaveed01/agentgauge/blob/main/examples/real-agent/suite.yaml).
 
 ## Run it on two models
 
@@ -18,10 +18,10 @@ agentgauge run examples/real-agent/suite.yaml --model qwen3:0.6b --concurrency 1
 
 | Model | Passed | Time for the ten cases |
 | --- | --- | --- |
-| `qwen3:4b` | 10 of 10 | 130 s |
-| `qwen3:0.6b` | 7 of 10 | 30 s |
+| `qwen3:4b` | 10 of 10 | 136 s |
+| `qwen3:0.6b` | 7 of 10 | 25 s |
 
-The 0.6B model is four times faster. It also lost three cases. `agentgauge runs show ID --trajectory` shows how:
+The 0.6B model is more than five times faster. It also lost three cases. `agentgauge runs show ID --trajectory` shows how:
 
 - **`refund-delivered`:** it called `refund_order` straight away, without looking the order up first. That is the one the system prompt forbids, and the one that costs money.
 - **`refund-delivered-polite`:** it looked the order up, then answered without issuing the refund it was asked for.
@@ -35,7 +35,7 @@ agentgauge compare previous latest
 
 ```text
 agentgauge compare: No significant change  suite order-support
-baseline 6db3b00b (qwen3:4b)  candidate 707d56d8 (qwen3:0.6b)
+baseline bc508d46 (qwen3:4b)  candidate 29e46ba9 (qwen3:0.6b)
 Pass rate fell from 100.0% to 70.0% (-30.0 points, 95% interval -60.0 to +0.0 points) over 10 paired case(s);
 exact McNemar p = 0.25.
 ┏━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -44,7 +44,7 @@ exact McNemar p = 0.25.
 │ pass rate              │ 100.0%   │ 70.0%     │ -30.0 points (-60.0 to +0.0) │
 │ trajectory_budget mean │ 1.000    │ 1.000     │ +0.000 (+0.000 to +0.000)    │
 │ trajectory_match mean  │ 1.000    │ 0.700     │ -0.300 (-0.600 to +0.000)    │
-│ mean latency           │ 13015 ms │ 3034 ms   │ -9981 ms                     │
+│ mean latency           │ 13589 ms │ 2475 ms   │ -11115 ms                    │
 └────────────────────────┴──────────┴───────────┴──────────────────────────────┘
 Regressed (3): refund-delivered, refund-without-id, refund-delivered-polite
 A regression needs p < 0.05 and a drop of more than 0 points in pass rate.
@@ -65,7 +65,7 @@ The full run, with each case's input, output and steps, is in the [HTML report](
 ## What to keep in mind
 
 - **One run each, temperature 0, seed 42.** Another day, or another Ollama version, can change individual cases; see the [benchmark](benchmarks/README.md) for how much.
-- **The route is scored by tool name, not by arguments.** A wrong order id does not fail a case by itself; it shows in the trajectory, because the scripted tool answers an unknown id with an error. In these runs every lookup of the 4B model used a real order id, and the 0.6B model's one invented id is the `refund-without-id` failure.
+- **Only the order id is checked, not the wording.** The suite uses `check_args: [order_id]`, so a refund of the wrong order fails a case while the free-text `reason` can be worded any way. In these runs it changed no outcome: every call of the 4B model used the right order id, and the 0.6B model's one invented id (`last_order_id`) is the `refund-without-id` failure. Before this check existed, the example compared tool names only and a wrong id would have passed.
 - **Tool results are scripted.** This tests the model's decisions, not real tools.
 - **Ten cases is a demonstration, not a test suite.** A real one needs many more, and the comparison would then be able to say something.
 
