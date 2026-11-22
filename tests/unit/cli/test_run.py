@@ -317,3 +317,16 @@ def test_fail_under_must_be_a_rate(tmp_path: Path) -> None:
     suite = write(tmp_path, FAKE_SUITE)
     assert invoke(tmp_path, str(suite), "--fail-under", "1.5")[0] == 2
     assert invoke(tmp_path, str(suite), "--fail-under", "-0.1")[0] == 2
+
+
+def test_a_run_where_every_case_errors_warns_on_stderr(tmp_path: Path) -> None:
+    unscripted = FAKE_SUITE.replace('"2+2?": "4"', '"a": "4"').replace('"3+3?": "7"', '"b": "7"')
+    code, output = invoke(tmp_path, str(write(tmp_path, unscripted)))
+    assert code == 0
+    assert "0/2 passed, 0 failed, 2 errors" in output
+    assert "warning: every case errored" in output
+
+
+def test_a_run_with_some_scored_cases_does_not_warn(tmp_path: Path) -> None:
+    suite = write(tmp_path, FAKE_SUITE.replace('"3+3?": "7"', '"other": "x"'))
+    assert "warning" not in invoke(tmp_path, str(suite))[1]
