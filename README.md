@@ -146,7 +146,7 @@ For a local server, add `--base-url http://localhost:8000/v1`; no key is needed.
 
 ## Exit codes
 
-`run` exits 0 whenever the run completes, even if cases fail or error: those are shown in the table. It exits 2 for configuration problems (unreadable or invalid suite, unknown scorer, bad provider options, a missing API key variable, an unusable database). `runs show` exits 1 for an unknown or ambiguous run id. `calibrate --fail-under` exits 1 when kappa is below the threshold. `compare` exits 0 when there is no significant regression, 1 on a significant regression, and 2 when the comparison cannot be made (unknown or ambiguous run, no shared cases, bad options, unusable database).
+`run` exits 0 whenever the run completes, even if cases fail or error: those are shown in the table. With `--fail-under RATE` it exits 1 instead when the pass rate is below `RATE` (errored cases count as not passed), so a pipeline can gate on a suite without `compare`. It exits 2 for configuration problems (unreadable or invalid suite, unknown scorer, bad provider options, a missing API key variable, an unusable database). `runs show` exits 1 for an unknown or ambiguous run id. `calibrate --fail-under` exits 1 when kappa is below the threshold. `compare` exits 0 when there is no significant regression, 1 on a significant regression, and 2 when the comparison cannot be made (unknown or ambiguous run, no shared cases, bad options, unusable database).
 
 ## Documentation
 
