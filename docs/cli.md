@@ -15,6 +15,9 @@ Every command takes `--help`. Run databases live in `.agentgauge/runs.db` by def
 | `--base-url` | OpenAI-compatible endpoint; overrides the suite |
 | `--api-key-env` | Environment variable holding the API key |
 | `--concurrency` | Maximum cases in flight at once (default 8) |
+| `--fail-under` | Exit 1 if the pass rate is below this value (0 to 1); errored cases count as not passed |
+
+When every case errored, `run` also prints a warning on stderr: that usually means the model name, endpoint or API key is wrong, not that the agent is bad.
 
 ## runs list
 
@@ -75,7 +78,8 @@ Every command takes `--help`. Run databases live in `.agentgauge/runs.db` by def
 
 | Command | 0 | 1 | 2 |
 | --- | --- | --- | --- |
-| `run`, `import-otel` | the run completed, even if cases failed or errored | | configuration problem: invalid suite, unknown scorer, bad provider options, missing API key variable, unusable database |
+| `run` | the run completed, even if cases failed or errored | the pass rate is below `--fail-under` | configuration problem: invalid suite, unknown scorer, bad provider options, missing API key variable, unusable database |
+| `import-otel` | the run completed, even if cases failed or errored | | configuration problem: invalid suite, unknown scorer, bad provider options, missing API key variable, unusable database |
 | `runs show` | shown | unknown or ambiguous run id | unusable database |
 | `calibrate` | calibrated | kappa below `--fail-under`, or undefined | configuration problem |
 | `compare` | no significant regression, or an improvement | a significant regression | the comparison could not be made: unknown or ambiguous run, no shared cases, bad options, unusable database |
