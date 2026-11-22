@@ -35,10 +35,22 @@ never-finishes  4 step(s), 4 tool call(s), stopped: max_steps
 
 | Scorer | Passes when |
 | --- | --- |
-| `trajectory_match` | the agent's tool calls match `metadata.expected_trajectory`, a list of `{name, arguments}`. `mode: exact` needs the same calls in the same order and no extras; `in_order` (default) needs the expected calls in order, extras allowed between; `any_order` needs every expected call, in any order. `check_args: false` compares names only. |
+| `trajectory_match` | the agent's tool calls match `metadata.expected_trajectory`, a list of `{name, arguments}`. `mode: exact` needs the same calls in the same order and no extras; `in_order` (default) needs the expected calls in order, extras allowed between; `any_order` needs every expected call, in any order. `check_args: false` compares names only; `check_args: [order_id]` compares just the listed arguments and ignores the rest. |
 | `trajectory_budget` | the agent made at most `max_calls` tool calls and finished (`require_final: false` drops that condition) |
 
 `trajectory_match` scores the fraction of expected calls it found (1 or 0 for `exact`) and passes only when all were found. Both fail with a clear reason if the output has no trajectory, for example when the suite has no `agent` block.
+
+### Matching only the arguments that matter
+
+Some arguments identify what the agent acted on; others are free text the model words differently every run. List the identifying ones and the scorer ignores the rest:
+
+```yaml
+scorers:
+  - name: trajectory_match
+    params: {mode: exact, check_args: [order_id]}
+```
+
+With an expected call of `refund_order` with `order_id: A100` and a `reason`, the agent passes when it refunds `A100` for any reason, and fails when it refunds `B200`. Listed arguments compare as usual (strings ignore case and edge whitespace). A listed argument the agent left out counts as a mismatch; an argument you do not list is never looked at.
 
 ## Importing OpenTelemetry traces
 
