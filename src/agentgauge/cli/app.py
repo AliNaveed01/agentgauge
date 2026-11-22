@@ -20,6 +20,7 @@ from agentgauge.cli.render import (
     render_run,
     render_run_list,
     render_trajectories,
+    summarize,
 )
 from agentgauge.compare import CompareError, compare_runs, select_run, to_json, to_markdown
 from agentgauge.core import ProviderConfig, RunResult, Suite, SuiteLoadError, load_suite
@@ -142,12 +143,22 @@ def run(
         str | None, typer.Option(help="Environment variable holding the API key.")
     ] = None,
     concurrency: Annotated[int, typer.Option(min=1, help="Maximum cases in flight at once.")] = 8,
+    fail_under: Annotated[
+        float | None,
+        typer.Option(
+            "--fail-under",
+            min=0.0,
+            max=1.0,
+            help="Exit 1 if the pass rate is below this value; errored cases count as not passed.",
+        ),
+    ] = None,
 ) -> None:
     """Run SUITE against a model, score the outputs and store the run.
 
     Exits 2 on configuration problems (bad suite, scorer or provider options,
     unusable database). Cases that fail scoring or error do not change the exit
-    code; they are reported in the results table.
+    code; they are reported in the results table. With --fail-under, a pass rate
+    below that value exits 1 after the run has been stored and shown.
     """
     try:
         suite = load_suite(suite_path)
@@ -164,6 +175,11 @@ def run(
     console = Console()
     render_run(console, result)
     console.print(f"Stored as run {result.run_id[:8]} in {db}")
+    if fail_under is not None:
+        stats = summarize(result)
+        rate = stats.passed / stats.total if stats.total else 0.0
+        if rate < fail_under:
+            _fail(f"pass rate {rate:.2f} is below --fail-under {fail_under}", code=REGRESSION)
 
 
 @runs_app.command("list")

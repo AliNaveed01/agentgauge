@@ -290,3 +290,30 @@ def test_runs_show_with_an_unusable_database_exits_2(tmp_path: Path) -> None:
     result = runner.invoke(app, ["runs", "show", "abc", "--db", str(tmp_path)])
     assert result.exit_code == 2
     assert "cannot open run store" in result.output
+
+
+def test_fail_under_exits_1_below_the_threshold_after_storing_the_run(tmp_path: Path) -> None:
+    code, output = invoke(tmp_path, str(write(tmp_path, FAKE_SUITE)), "--fail-under", "0.75")
+    assert code == 1
+    assert "1/2 passed" in output and "Stored as run" in output
+    assert "pass rate 0.50 is below --fail-under 0.75" in output
+    assert stored_runs(tmp_path) == 1
+
+
+def test_fail_under_passes_at_or_above_the_threshold(tmp_path: Path) -> None:
+    suite = write(tmp_path, FAKE_SUITE)
+    assert invoke(tmp_path, str(suite), "--fail-under", "0.5")[0] == 0
+    assert invoke(tmp_path, str(suite), "--fail-under", "0")[0] == 0
+
+
+def test_errored_cases_count_as_not_passed_for_fail_under(tmp_path: Path) -> None:
+    suite = write(tmp_path, FAKE_SUITE.replace('"3+3?": "7"', '"other": "x"'))
+    code, output = invoke(tmp_path, str(suite), "--fail-under", "1")
+    assert code == 1
+    assert "pass rate 0.50" in output
+
+
+def test_fail_under_must_be_a_rate(tmp_path: Path) -> None:
+    suite = write(tmp_path, FAKE_SUITE)
+    assert invoke(tmp_path, str(suite), "--fail-under", "1.5")[0] == 2
+    assert invoke(tmp_path, str(suite), "--fail-under", "-0.1")[0] == 2
