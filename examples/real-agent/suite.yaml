@@ -43,7 +43,7 @@ agent:
 
 scorers:
   - name: trajectory_match
-    params: {mode: exact, check_args: false}
+    params: {mode: exact, check_args: [order_id]}
   - name: trajectory_budget
     params: {max_calls: 3}
 
@@ -60,8 +60,8 @@ cases:
         content: "Please refund order A100, it arrived damaged."
     metadata:
       expected_trajectory:
-        - {name: lookup_order}
-        - {name: refund_order}
+        - {name: lookup_order, arguments: {order_id: A100}}
+        - {name: refund_order, arguments: {order_id: A100}}
 
   - id: refund-shipped-refused
     input:
@@ -75,7 +75,7 @@ cases:
         content: "I want my money back for order B200 right now."
     metadata:
       expected_trajectory:
-        - {name: lookup_order}
+        - {name: lookup_order, arguments: {order_id: B200}}
 
   - id: status-question
     input:
@@ -89,7 +89,7 @@ cases:
         content: "Where is my order B200?"
     metadata:
       expected_trajectory:
-        - {name: lookup_order}
+        - {name: lookup_order, arguments: {order_id: B200}}
 
   - id: already-refunded
     input:
@@ -103,7 +103,7 @@ cases:
         content: "Refund order C300 for me."
     metadata:
       expected_trajectory:
-        - {name: lookup_order}
+        - {name: lookup_order, arguments: {order_id: C300}}
 
   - id: policy-question
     input:
@@ -130,8 +130,8 @@ cases:
         content: "Order D400 is the wrong size. I would like a refund."
     metadata:
       expected_trajectory:
-        - {name: lookup_order}
-        - {name: refund_order}
+        - {name: lookup_order, arguments: {order_id: D400}}
+        - {name: refund_order, arguments: {order_id: D400}}
 
   - id: two-statuses
     input:
@@ -145,8 +145,8 @@ cases:
         content: "Can you tell me the status of A100 and of B200?"
     metadata:
       expected_trajectory:
-        - {name: lookup_order}
-        - {name: lookup_order}
+        - {name: lookup_order, arguments: {order_id: A100}}
+        - {name: lookup_order, arguments: {order_id: B200}}
 
   - id: greeting
     input:
@@ -186,5 +186,5 @@ cases:
         content: "Hello, could you refund order A100? It was not what I expected."
     metadata:
       expected_trajectory:
-        - {name: lookup_order}
-        - {name: refund_order}
+        - {name: lookup_order, arguments: {order_id: A100}}
+        - {name: refund_order, arguments: {order_id: A100}}

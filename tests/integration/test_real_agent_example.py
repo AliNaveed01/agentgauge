@@ -80,3 +80,27 @@ def test_refunding_without_looking_up_fails_that_case() -> None:
     by_id = {r.case_id: r.passed for r in run.results}
     assert by_id["refund-delivered"] is False and by_id["refund-shipped-refused"] is False
     assert not any(by_id.values())
+
+
+def test_a_refund_of_the_wrong_order_fails_but_other_wording_passes() -> None:
+    suite = load_suite(SUITE)
+    prompt = next(c.input[-1].content for c in suite.cases if c.id == "refund-delivered")
+    one_case = suite.model_copy(
+        update={"cases": tuple(c for c in suite.cases if c.id == "refund-delivered")}
+    )
+
+    def run_with(refunded: str, reason: str) -> bool:
+        provider = FakeProvider(
+            {
+                prompt: [
+                    call("lookup_order", order_id="A100"),
+                    call("refund_order", order_id=refunded, reason=reason),
+                    "ok",
+                ]
+            },
+            name="scripted",
+        )
+        return asyncio.run(run_suite(one_case, provider, concurrency=1)).results[0].passed
+
+    assert run_with("A100", "the box was crushed in transit")
+    assert not run_with("B200", "damaged")
