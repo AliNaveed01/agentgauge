@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 from agentgauge.core.models import ModelOutput, Score, TestCase, ToolCall, Trajectory
 from agentgauge.scorers.arguments import parse_arguments, same_arguments
@@ -21,6 +21,22 @@ def _names(items: list[dict[str, Any]] | tuple[ToolCall, ...]) -> list[str]:
     return [item["name"] if isinstance(item, dict) else item.name for item in items]
 
 
+def _check_args(value: Any) -> bool | frozenset[str]:
+    if isinstance(value, bool):
+        return value
+    if (
+        isinstance(value, list) and value and all(isinstance(name, str) and name for name in value)  # pyright: ignore[reportUnknownVariableType]
+    ):
+        return frozenset(cast("list[str]", value))
+    raise ScorerConfigError(
+        f"check_args must be true, false, or a non-empty list of argument names, got {value!r}"
+    )
+
+
+def _pick(arguments: dict[str, Any], names: frozenset[str]) -> dict[str, Any]:
+    return {name: value for name, value in arguments.items() if name in names}
+
+
 @register_scorer("trajectory_match")
 class TrajectoryMatch:
     """Compares the agent's tool calls with ``case.metadata[key]``.
@@ -31,20 +47,25 @@ class TrajectoryMatch:
     * ``in_order`` (default): the expected calls appear in order; other calls may sit between.
     * ``any_order``: every expected call was made, in any order; extras are allowed.
 
-    With ``check_args`` (default) arguments must be equal, strings ignoring case and edge
-    whitespace; without it only tool names are compared. The score is the fraction of
-    expected calls matched (1.0 or 0.0 for ``exact``); it passes only when all were.
+    With ``check_args`` (default ``true``) arguments must be equal, strings ignoring case and
+    edge whitespace; ``false`` compares only tool names. A list of argument names compares just
+    those arguments and ignores the rest, which suits a tool with one identifier and one
+    free-text argument. The score is the fraction of expected calls matched (1.0 or 0.0 for
+    ``exact``); it passes only when all were.
     """
 
     name = "trajectory_match"
 
     def __init__(
-        self, mode: Mode = "in_order", check_args: bool = True, key: str = "expected_trajectory"
+        self,
+        mode: Mode = "in_order",
+        check_args: bool | list[str] = True,
+        key: str = "expected_trajectory",
     ) -> None:
         if mode not in MODES:
             raise ScorerConfigError(f"mode must be one of {list(MODES)}, got {mode!r}")
         self._mode = mode
-        self._check_args = check_args
+        self._check_args = _check_args(check_args)
         self._key = key
 
     async def score(self, case: TestCase, output: ModelOutput) -> Score:
@@ -88,7 +109,12 @@ class TrajectoryMatch:
         if not self._check_args:
             return True
         arguments = parse_arguments(call.arguments)
-        return arguments is not None and same_arguments(arguments, expected.get("arguments", {}))
+        if arguments is None:
+            return False
+        wanted: dict[str, Any] = expected.get("arguments", {})
+        if isinstance(self._check_args, frozenset):
+            arguments, wanted = _pick(arguments, self._check_args), _pick(wanted, self._check_args)
+        return same_arguments(arguments, wanted)
 
     def _count(self, expected: list[dict[str, Any]], actual: tuple[ToolCall, ...]) -> int:
         if self._mode == "exact":

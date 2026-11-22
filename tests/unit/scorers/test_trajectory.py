@@ -135,3 +135,47 @@ def test_budget_without_trajectory_and_invalid_budget() -> None:
     assert "no trajectory" in (budget(1, None).reason or "")
     with pytest.raises(ScorerConfigError):
         TrajectoryBudget(-1)
+
+
+REFUND = {"name": "refund", "arguments": {"order_id": "A100", "reason": "damaged"}}
+
+
+def test_listed_arguments_must_match_and_the_rest_are_ignored() -> None:
+    other_reason = trajectory(("refund", {"order_id": "A100", "reason": "it broke"}))
+    assert score("exact", [REFUND], other_reason, check_args=["order_id"]).passed
+    assert not score("exact", [REFUND], other_reason).passed
+    assert score("exact", [REFUND], other_reason, check_args=False).passed
+
+
+def test_a_wrong_listed_argument_fails_even_when_the_others_match() -> None:
+    wrong_order = trajectory(("refund", {"order_id": "B200", "reason": "damaged"}))
+    result = score("exact", [REFUND], wrong_order, check_args=["order_id"])
+    assert not result.passed
+    assert result.value == 0.0
+
+
+def test_listed_arguments_compare_like_full_arguments() -> None:
+    shouting = trajectory(("refund", {"order_id": " a100 ", "reason": "x"}))
+    assert score("in_order", [REFUND], shouting, check_args=["order_id"]).passed
+
+
+def test_a_listed_argument_missing_from_the_call_fails() -> None:
+    missing = trajectory(("refund", {"reason": "damaged"}))
+    assert not score("in_order", [REFUND], missing, check_args=["order_id"]).passed
+    unlisted = trajectory(("refund", {}))
+    assert score("in_order", [{"name": "refund"}], unlisted, check_args=["order_id"]).passed
+
+
+def test_listed_arguments_apply_to_every_mode() -> None:
+    calls = trajectory(
+        ("refund", {"order_id": "A100", "reason": "one"}),
+        ("refund", {"order_id": "A100", "reason": "two"}),
+    )
+    assert score("any_order", [REFUND, REFUND], calls, check_args=["order_id"]).passed
+    assert not score("exact", [REFUND], calls, check_args=["order_id"]).passed
+
+
+def test_bad_check_args_are_rejected() -> None:
+    for bad in ([], [""], [1], "order_id", 1, None):
+        with pytest.raises(ScorerConfigError, match="check_args"):
+            TrajectoryMatch(check_args=bad)  # type: ignore[arg-type]
