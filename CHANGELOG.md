@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.6.0](https://github.com/AliNaveed01/agentgauge/compare/v0.5.0...v0.6.0) (2026-11-23)
+
+
+### Features
+
+* **cli:** let run exit 1 when the pass rate is below --fail-under ([071ce14](https://github.com/AliNaveed01/agentgauge/commit/071ce142da5c0932c0ce7060c24ec615337ec947)), closes [#76](https://github.com/AliNaveed01/agentgauge/issues/76)
+* **cli:** warn when every case in a run errored ([3a3f729](https://github.com/AliNaveed01/agentgauge/commit/3a3f729f189dc1e5503f9cda2290ea0ac2a7a45f)), closes [#76](https://github.com/AliNaveed01/agentgauge/issues/76)
+
+
+### Documentation
+
+* add ADR 0021 on gating run by its pass rate ([814504d](https://github.com/AliNaveed01/agentgauge/commit/814504d0e7636515fe0823ad39ac554ef1d316a4)), closes [#76](https://github.com/AliNaveed01/agentgauge/issues/76)
+* document run --fail-under and the all-errored warning ([d57ab41](https://github.com/AliNaveed01/agentgauge/commit/d57ab4122dd27c05c51ea6e8166b702ff1980a2f)), closes [#76](https://github.com/AliNaveed01/agentgauge/issues/76)
+* **examples:** pin the example workflow to v0.5.0 ([34295c8](https://github.com/AliNaveed01/agentgauge/commit/34295c84efc6ccf9384f55d81165b90a1203e8b6)), closes [#79](https://github.com/AliNaveed01/agentgauge/issues/79)
+* record the trial of the action on real pull requests ([1e53a13](https://github.com/AliNaveed01/agentgauge/commit/1e53a1316be190da1ab5cdbe4363094e9197e691)), closes [#79](https://github.com/AliNaveed01/agentgauge/issues/79)
+* say which release carries the action's Node fix ([79d1986](https://github.com/AliNaveed01/agentgauge/commit/79d19863d719e0004e395d518602307fb156c3f1)), closes [#79](https://github.com/AliNaveed01/agentgauge/issues/79)
+
 ## [0.5.0](https://github.com/AliNaveed01/agentgauge/compare/v0.4.0...v0.5.0) (2026-11-22)
 
 
