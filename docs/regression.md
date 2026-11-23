@@ -50,7 +50,7 @@ Significance needs enough cases that changed. With no improvements at all, six r
 
 ## In CI
 
-The [`action.yml`](https://github.com/AliNaveed01/agentgauge/blob/main/action.yml) at the root of this repository wraps `compare` as a GitHub Action: it installs `agentgauge-eval`, writes the markdown report to the job summary, and fails the job only on exit code 1; a setup problem (exit code 2) fails with a different message. [`examples/github-action/regression.yml`](https://github.com/AliNaveed01/agentgauge/blob/main/examples/github-action/regression.yml) shows the whole workflow: run the suite on the base branch and on the pull request into one database, then compare `previous` with `latest`. Pin the action to a release tag (`@v0.3.0` is the first that contains it). It is run for real on GitHub, against `examples/regression`, whenever `action.yml` changes: a regression must fail the step with exit code 1, an unchanged comparison must pass with 0, and a setup problem must fail with 2 ([`action-example.yml`](https://github.com/AliNaveed01/agentgauge/blob/main/.github/workflows/action-example.yml)).
+The [`action.yml`](https://github.com/AliNaveed01/agentgauge/blob/main/action.yml) at the root of this repository wraps `compare` as a GitHub Action: it installs `agentgauge-eval`, writes the markdown report to the job summary, and fails the job only on exit code 1; a setup problem (exit code 2) fails with a different message. [`examples/github-action/regression.yml`](https://github.com/AliNaveed01/agentgauge/blob/main/examples/github-action/regression.yml) shows the whole workflow: run the suite on the base branch and on the pull request into one database, then compare `previous` with `latest`. Pin the action to a release tag (`@v0.3.0` is the first that contains it; the example uses `@v0.5.0`). It is run for real on GitHub, against `examples/regression`, whenever `action.yml` changes: a regression must fail the step with exit code 1, an unchanged comparison must pass with 0, and a setup problem must fail with 2 ([`action-example.yml`](https://github.com/AliNaveed01/agentgauge/blob/main/.github/workflows/action-example.yml)).
 
 ## Limits
 
@@ -59,3 +59,13 @@ The [`action.yml`](https://github.com/AliNaveed01/agentgauge/blob/main/action.ym
 - The decision uses pass rate. A drop in a scorer's mean that does not change which cases pass shows in the scorer rows and does not fail the job.
 
 The design is recorded in [ADR 0017](adr/0017-regression-comparison.md).
+
+## Seen on a real pull request
+
+Besides the runs against `examples/regression`, the action was tried in a separate public repository, [`agentgauge-action-trial`](https://github.com/AliNaveed01/agentgauge-action-trial), set up the way the example above describes: a twelve-case suite, the fake provider so that no API key is needed, and the workflow from `examples/github-action/regression.yml`.
+
+- **A pull request that changed eight of the twelve answers** failed the job with exit code 1. The summary showed the pass rate falling from 100% to 33.3% (exact McNemar p = 0.0078) and listed the eight regressed cases.
+- **A pull request that only touched the README** passed with "No significant change".
+- **The setup took one workflow file and no secrets.** Both runs finished in under half a minute.
+
+The trial turned up one thing to fix: GitHub warned that `actions/checkout@v4` and `actions/setup-python@v5` run on the deprecated Node 20. The example and the action now use the v7 releases.
