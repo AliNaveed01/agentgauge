@@ -68,4 +68,4 @@ Besides the runs against `examples/regression`, the action was tried in a separa
 - **A pull request that only touched the README** passed with "No significant change".
 - **The setup took one workflow file and no secrets.** Both runs finished in under half a minute.
 
-The trial turned up one thing to fix: GitHub warned that `actions/checkout@v4` and `actions/setup-python@v5` run on the deprecated Node 20. The example and the action now use the v7 releases.
+The trial turned up one thing to fix: GitHub warned that `actions/checkout@v4` and `actions/setup-python@v5` run on the deprecated Node 20. The action and the example workflow now use the v7 releases; the action's fix is in the release after 0.5.0, so the warning remains with `@v0.5.0`.
